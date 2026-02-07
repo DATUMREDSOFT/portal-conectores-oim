@@ -1,0 +1,78 @@
+<div class="main-container-full content-animate">
+    <div class="viewer-panel-full">
+        <div class="header-plain">
+            <h2>Plano de Atributos OIM</h2>
+            <button class="btn-detail" (click)="back()">VOLVER AL LISTADO</button>
+        </div>
+
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Atributo OIM</th>
+                    <th>Descripción</th>
+                    <th style="text-align: center;">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let attr of attributesCatalog">
+                    <td><span class="id-badge">#{{ attr.attrId }}</span></td>
+                    <td><b>{{ attr.attrName }}</b></td>
+                    <td>{{ attr.attrDesc }}</td>
+                    <td style="text-align: center;">
+                        <button class="btn-detail" (click)="searchImpactsByAttr(attr.attrName)">
+                            VER IMPACTO
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showImpactModal" (click)="closeModal()">
+    <div class="modal-content-lg" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Impacto de Atributo: <span style="color: #0078d4;">{{ selectedAttrName }}</span></h3>
+            <button class="close-btn" (click)="closeModal()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <div *ngIf="isLoadingDetails" style="text-align: center; padding: 20px;">
+                <p>Consultando conectores...</p>
+            </div>
+
+            <div *ngIf="!isLoadingDetails">
+                <p style="margin-bottom: 15px;">Este atributo se encuentra mapeado en <b>{{ impacts.length }}</b> instancias:</p>
+                <table class="table-plain">
+                    <thead>
+                        <tr>
+                            <th>Instancia</th>
+                            <th>Target Attr</th>
+                            <th>Etiqueta</th>
+                            <th style="text-align: center;">Aprov.</th>
+                            <th style="text-align: center;">Recon.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let imp of impacts">
+                            <td><b>{{ imp.instance }}</b></td>
+                            <td><code>{{ imp.attributeTarget }}</code></td>
+                            <td>{{ imp.labelForm }}</td>
+                            <td style="text-align: center;">
+                                <span [style.color]="imp.aprov ? '#27ae60' : '#eb4d4b'">{{ imp.aprov ? '✔' : '✘' }}</span>
+                            </td>
+                            <td style="text-align: center;">
+                                <span [style.color]="imp.recon ? '#27ae60' : '#eb4d4b'">{{ imp.recon ? '✔' : '✘' }}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-detail" (click)="closeModal()">CERRAR</button>
+        </div>
+    </div>
+</div>

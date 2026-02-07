@@ -1,0 +1,175 @@
+<div class="main-container" *ngIf="activeSection !== 'attribute-plain'">
+  <div class="viewer-panel">
+    
+  <div class="selected-badge" *ngIf="currentApp && activeSection !== 'list'">
+  <span class="badge-label">CONECTOR SELECCIONADO:</span>
+  <span class="badge-instance">
+    {{ selectedInstanceName || 'No seleccionado' }}
+  </span>
+</div>
+
+    <div *ngIf="activeSection === 'list'" class="content-animate">
+      <h2>Catálogo de Conectores OIM</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Instancia</th>
+            <th>Descripción</th>
+            <th style="text-align: center;">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of pagedConnectors">
+            <td><b>{{ item.instanceName }}</b></td>
+            <td>{{ item.instanceDisplayName }}</td>
+            <td style="text-align: center;">
+              <button class="btn-detail" (click)="viewDetail(item.instanceName)">
+                VER DETALLE
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pagination">
+        <button class="page-btn" [disabled]="currentPage === 1" (click)="changePage(-1)">Anterior</button>
+        <span class="page-info">Página {{ currentPage }} de {{ totalPages }}</span>
+        <button class="page-btn" [disabled]="currentPage === totalPages" (click)="changePage(1)">Siguiente</button>
+      </div>
+    </div>
+
+    <div *ngIf="activeSection === 'connectivity'" class="content-animate">
+      <h2>Detalles de Conectividad</h2>
+      <div class="audit-card">
+        <div class="audit-item">
+          <label>Nombre del Conector</label>
+          <span>{{ currentApp?.infoTemplate?.connectorName }}</span>
+        </div>
+        <div class="audit-item">
+          <label>Versión del Conector</label>
+          <span>{{ currentApp?.infoTemplate?.connectorVersion }}</span>
+        </div>
+        <div class="audit-item" style="grid-column: span 2;">
+          <label>Ruta de Despliegue (Bundle Path)</label>
+          <code>{{ currentApp?.connectorDeploymentPath }}</code>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="activeSection === 'provisioning'" class="content-animate">
+      <h2>Mapeo de Aprovisionamiento</h2>
+      <table>
+        <thead>
+          <tr><th>Atributo OIM</th><th>Atributo Destino</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of currentApp?.mappings">
+            <td>{{ m.display }}</td>
+            <td><code>{{ m.target }}</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="activeSection === 'reconciliation'" class="content-animate">
+      <h2>Lógica de Reconciliación</h2>
+      <button class="btn-info-sm" (click)="openModal('Descripción de Reconciliación', currentApp?.descriptionRecon)">
+           Ver más
+      </button><br/><br/>
+      <div *ngFor="let r of currentApp?.identityCorrelationRules" class="recon-card">
+        <div class="audit-item">
+          <label>Criterio de Match</label>
+          <span><b>{{ r.targetAttr }}</b> {{ r.operator }} {{ r.userAttr }}</span>
+        </div>
+        <div class="audit-item">
+          <label>Lógica Global</label>
+          <span>{{ r.logic }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="activeSection === 'script'" class="content-animate">
+      <h2>Script de Transformación (Groovy)</h2>
+      <button class="btn-info-sm" (click)="openModal('Descripción del Script', currentApp?.descriptionScript)">
+         Ver más
+      </button><br/><br/>
+      <div class="code-container">
+        <div class="code-header"><span>EDITOR MODE: LIGHT</span></div>
+        <pre><code>{{ currentApp?.transformationScript }}</code></pre>
+      </div>
+    </div>
+
+    <div *ngIf="activeSection === 'audit'" class="content-animate">
+      <h2>Auditoría de Registro</h2>
+      <div class="audit-card">
+        <div class="audit-item"><label>Creado Por</label><span>{{ currentApp?.infoTemplate?.createBy }}</span></div>
+        <div class="audit-item"><label>Fecha Creación</label><span>{{ currentApp?.infoTemplate?.createDate }}</span></div>
+        <div class="audit-item"><label>Modificado Por</label><span>{{ currentApp?.infoTemplate?.updateBy }}</span></div>
+        <div class="audit-item"><label>Última Fecha</label><span>{{ currentApp?.infoTemplate?.updateDate }}</span></div>
+      </div>
+    </div>
+
+    <div *ngIf="activeSection === 'description'" class="content-animate">
+      <h2>¿Qué hace el conector?</h2>
+      <p style="line-height: 1.8; color: #2d3436;">{{ currentApp?.description }}</p>
+    </div>
+  </div>
+
+  <div class="menu-panel">
+    <div class="menu-item" [class.active]="activeSection === 'list'" (click)="setSection('list')">Listado de Conectores</div>
+    <div class="menu-item" [class.active]="activeSection === 'connectivity'" (click)="setSection('connectivity')">Conectividad</div>
+    <div class="menu-item" [class.active]="activeSection === 'provisioning'" (click)="setSection('provisioning')">Aprovisionamiento</div>
+    <div class="menu-item" [class.active]="activeSection === 'reconciliation'" (click)="setSection('reconciliation')">Reconciliación</div>
+    <div class="menu-item" [class.active]="activeSection === 'script'" (click)="setSection('script')">Transformación</div>
+    <div class="menu-item" [class.active]="activeSection === 'audit'" (click)="setSection('audit')">Auditoría</div>
+    
+    <div class="description-link" [class.active]="activeSection === 'description'" (click)="setSection('description')">
+        ¿Qué hace el conector?
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ modalTitle }}</h3>
+      <button class="close-btn" (click)="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>{{ modalContent }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-detail" (click)="closeModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ modalTitle }}</h3>
+      <button class="close-btn" (click)="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>{{ modalContent }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-detail" (click)="closeModal()">Cerrar</button>
+    </div>
+  </div>
+</div> <div class="fab-container" *ngIf="activeSection !== 'attribute-plain'">
+  <div class="fab-options" [class.active]="showFloatingMenu">
+    <div class="fab-item" (click)="goToAttributePlain()">
+      <span class="fab-label">Plano de Atributos</span>
+      <div class="fab-icon-sub">📋</div>
+    </div>
+  </div>
+  
+  <div class="fab-main" (click)="showFloatingMenu = !showFloatingMenu">
+    <span class="fab-icon-main">+</span>
+  </div>
+</div>
+
+<app-attributeplain
+  *ngIf="activeSection === 'attribute-plain'" 
+  (onBack)="activeSection = 'list'">
+</app-attributeplain>
