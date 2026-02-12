@@ -48,6 +48,8 @@
                     <thead>
                         <tr>
                             <th>Instancia</th>
+                            <th>Nombre mostrar</th>
+                            <th>Descripción</th>
                             <th>Target Attr</th>
                             <th>Etiqueta</th>
                             <th style="text-align: center;">Aprov.</th>
@@ -57,6 +59,8 @@
                     <tbody>
                         <tr *ngFor="let imp of impacts">
                             <td><b>{{ imp.instance }}</b></td>
+                            <td><b>{{ imp.leyenda }}</b></td>
+                            <td><b>{{ imp.desc }}</b></td>
                             <td><code>{{ imp.attributeTarget }}</code></td>
                             <td>{{ imp.labelForm }}</td>
                             <td style="text-align: center;">
