@@ -1,32 +1,126 @@
-<div class="main-container-full content-animate">
+<div class="main-container-full content-animate" *ngIf="!isMatrixView">
     <div class="viewer-panel-full">
         <div class="header-plain">
-            <h2>Plano de Atributos OIM</h2>
-            <button class="btn-detail" (click)="back()">VOLVER AL LISTADO</button>
+            <div class="title-group">
+                <h2>Plano de Atributos OIM</h2>
+                <div class="search-container" style="margin-top: 10px; max-width: 350px;">
+                    <span class="search-icon">🔍</span>
+                    <input 
+                        type="text" 
+                        class="input-search" 
+                        placeholder="Filtrar por nombre o descripción..."
+                        [(ngModel)]="searchTextAttr"
+                        (input)="filterAttributes()">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button class="btn-detail" style="background-color: #27ae60;" (click)="openAddModal()">
+                    + AGREGAR REGISTRO
+                </button>
+                <button class="btn-detail" (click)="back()">VOLVER AL LISTADO</button>
+            </div>
         </div>
 
         <table class="table-custom">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Atributo OIM</th>
                     <th>Descripción</th>
-                    <th style="text-align: center;">Acción</th>
+                    <th style="text-align: center;">Impacto Individual</th>
+                    <th style="text-align: center;">Visión General</th>
+                    <th style="text-align: center;">Gestión</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let attr of attributesCatalog">
-                    <td><span class="id-badge">#{{ attr.attrId }}</span></td>
-                    <td><b>{{ attr.attrName }}</b></td>
+                <tr *ngFor="let attr of pagedAttributes">
+                    <td><b class="text-primary">{{ attr.attrName }}</b></td>
                     <td>{{ attr.attrDesc }}</td>
                     <td style="text-align: center;">
                         <button class="btn-detail" (click)="searchImpactsByAttr(attr.attrName)">
-                            VER IMPACTO
+                            VER DETALLE
                         </button>
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn-detail" style="background-color: #6c5ce7 !important;" (click)="showGeneralVision(attr.attrName)">
+                            VISIÓN GENERAL
+                        </button>
+                    </td>
+                    <td style="text-align: center;">
+                        <div style="display: flex; gap: 5px; justify-content: center;">
+                            <button class="btn-icon edit" (click)="openEditModal(attr)" title="Editar">✏️</button>
+                            <button class="btn-icon delete" (click)="confirmDelete(attr.attrId)" title="Eliminar">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr *ngIf="filteredAttributesCatalog.length === 0">
+                    <td colspan="5" style="text-align: center; padding: 30px; color: #636e72;">
+                        No se encontraron atributos que coincidan con "{{ searchTextAttr }}"
                     </td>
                 </tr>
             </tbody>
         </table>
+
+        <div class="pagination" *ngIf="pagedAttributes.length > 0">
+            <button class="page-btn" 
+                    [disabled]="currentPage === 1" 
+                    (click)="changePage(-1)">
+                Anterior
+            </button>
+            <span class="page-info">
+                Página <b>{{ currentPage }}</b> de {{ totalPages }}
+            </span>
+            <button class="page-btn" 
+                    [disabled]="currentPage === totalPages" 
+                    (click)="changePage(1)">
+                Siguiente
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="main-container-full content-animate" *ngIf="isMatrixView">
+    <div class="viewer-panel-full">
+        <div class="header-plain">
+            <div class="title-group">
+                <h2>Visión General: <span style="color: #6c5ce7;">{{ selectedAttrName }}</span></h2>
+                <p class="subtitle">Mapeo transversal de campos en conectores</p>
+            </div>
+            <button class="btn-detail" (click)="isMatrixView = false">CERRAR MATRIZ</button>
+        </div>
+
+        <div class="matrix-wrapper">
+            <table class="table-matrix">
+                <thead>
+                    <tr cdkDropList 
+                        cdkDropListOrientation="horizontal" 
+                        (cdkDropListDropped)="dropColumn($event)">
+                        
+                        <th class="sticky-col">ATRIBUTO OIM</th>
+                        <th *ngFor="let imp of impacts" cdkDrag class="draggable-header">
+                            <div class="header-cell">
+                                <span class="inst-name">{{ imp.instance }}</span>
+                                <span class="env-tag" [ngClass]="getEnvClass(imp.instance)">
+                                    {{ getEnvName(imp.instance) }}
+                                </span>
+                            </div>
+                            <div class="drag-placeholder" *cdkDragPlaceholder></div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="sticky-col"><b>{{ selectedAttrName }}</b></td>
+                        <td *ngFor="let imp of impacts" class="text-center">
+                            <div class="target-container-minimal">
+                                <code class="target-name-bold">{{ imp.attributeTarget }}</code>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -36,12 +130,10 @@
             <h3>Impacto de Atributo: <span style="color: #0078d4;">{{ selectedAttrName }}</span></h3>
             <button class="close-btn" (click)="closeModal()">&times;</button>
         </div>
-        
         <div class="modal-body">
             <div *ngIf="isLoadingDetails" style="text-align: center; padding: 20px;">
                 <p>Consultando conectores...</p>
             </div>
-
             <div *ngIf="!isLoadingDetails">
                 <p style="margin-bottom: 15px;">Este atributo se encuentra mapeado en <b>{{ impacts.length }}</b> instancias:</p>
                 <table class="table-plain">
@@ -59,8 +151,8 @@
                     <tbody>
                         <tr *ngFor="let imp of impacts">
                             <td><b>{{ imp.instance }}</b></td>
-                            <td><b>{{ imp.leyenda }}</b></td>
-                            <td><b>{{ imp.desc }}</b></td>
+                            <td>{{ imp.leyenda }}</td>
+                            <td>{{ imp.desc }}</td>
                             <td><code>{{ imp.attributeTarget }}</code></td>
                             <td>{{ imp.labelForm }}</td>
                             <td style="text-align: center;">
@@ -74,9 +166,32 @@
                 </table>
             </div>
         </div>
-
         <div class="modal-footer">
             <button class="btn-detail" (click)="closeModal()">CERRAR</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showFormModal" (click)="showFormModal = false">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>{{ isEditMode ? 'Editar Atributo' : 'Nuevo Registro de Atributo' }}</h3>
+            <button class="close-btn" (click)="showFormModal = false">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Nombre del Atributo OIM</label>
+                <input type="text" [(ngModel)]="tempAttr.attrName" class="input-plain" placeholder="Ej: f_dui">
+            </div>
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Descripción Funcional</label>
+                <textarea [(ngModel)]="tempAttr.attrDesc" class="input-plain" rows="4" placeholder="Describa el propósito de este atributo..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-detail" (click)="saveAttribute()">
+                {{ isEditMode ? 'GUARDAR CAMBIOS' : 'CREAR REGISTRO' }}
+            </button>
         </div>
     </div>
 </div>

@@ -367,3 +367,293 @@ td { padding: 15px; border-bottom: 1px solid #e1e4e8; color: #2d3436; }
     overflow-y: auto;
     padding: 20px;
 }
+
+
+
+.btn-icon {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.btn-icon.edit:hover { background-color: #f0f7ff; }
+.btn-icon.delete:hover { background-color: #fff0f0; }
+
+.text-primary { color: #0078d4; }
+
+/* --- ESTILOS ESPECÍFICOS PARA EL FORMULARIO --- */
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #2d3436;
+    font-size: 0.95rem;
+}
+
+/* Estilo para inputs y textareas */
+.input-plain {
+    width: 100%; /* Asegura que ocupen todo el ancho del modal */
+    padding: 12px 15px;
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #2d3436;
+    background-color: #ffffff;
+    transition: all 0.2s ease;
+    box-sizing: border-box; /* Evita que el padding desborde el ancho */
+}
+
+.input-plain:focus {
+    outline: none;
+    border-color: #0078d4;
+    box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+}
+
+/* Ajuste específico para el área de descripción */
+textarea.input-plain {
+    min-height: 100px;
+    resize: vertical; /* Permite al usuario ajustar el alto pero no el ancho */
+    font-family: inherit; /* Mantiene la misma fuente que el resto */
+}
+
+/* Alineación de botones en el footer del formulario */
+.modal-footer .btn-detail {
+    padding: 12px 25px !important;
+    font-size: 13px !important;
+}
+
+
+/* Contenedor con scroll horizontal */
+.matrix-wrapper {
+    overflow-x: auto;
+    border: 1px solid #e1e4e8;
+    border-radius: 15px;
+    background: #ffffff;
+    margin-top: 20px;
+}
+
+.table-matrix {
+    width: max-content; /* Obliga a la tabla a expandirse horizontalmente */
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Primera columna pegada a la izquierda */
+.sticky-col {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    background: #f8f9fb !important;
+    border-right: 3px solid #6c5ce7;
+    min-width: 180px;
+    padding: 20px;
+    box-shadow: 5px 0 10px rgba(0,0,0,0.05);
+}
+
+.header-cell {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    min-width: 160px;
+    text-align: center;
+}
+
+.inst-name { font-size: 11px; font-weight: 800; color: #2d3436; }
+
+/* Etiquetas de ambiente según el nombre (lo que pidió el Director) */
+.env-tag { font-size: 9px; padding: 2px 8px; border-radius: 4px; margin-top: 5px; font-weight: 700; }
+.env-desa { background: #e3f2fd; color: #1976d2; }
+.env-test { background: #fff3e0; color: #ef6c00; }
+
+.target-container {
+    padding: 10px;
+    background: #f1f4f7;
+    border-radius: 8px;
+    margin: 5px;
+}
+
+.target-name { display: block; font-weight: 700; color: #0078d4; margin-bottom: 3px; }
+.target-label { font-size: 10px; color: #636e72; }
+
+
+/* Cambia el cursor para indicar que es movible */
+.draggable-header {
+    cursor: move;
+}
+
+/* Estilo del elemento que se está moviendo */
+.cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+/* Animación cuando los elementos se acomodan */
+.cdk-drop-list-dragging .cdk-drag {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* El 'fantasma' que queda en la posición original */
+.cdk-drag-placeholder {
+    opacity: 0;
+}
+
+/* --- EXTENSIÓN PARA EL BUSCADOR (FILTRO) --- */
+
+.header-plain {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    gap: 20px;
+}
+
+.title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.search-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #636e72;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.input-search {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    border: 1px solid #e1e4e8;
+    border-radius: 20px;
+    font-size: 14px;
+    color: #2d3436;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.input-search:focus {
+    border-color: #6c5ce7; /* Color púrpura para diferenciar la sección de atributos */
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+}
+
+/* --- OPTIMIZACIÓN DE LA TABLA CUSTOM --- */
+
+.table-custom {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 10px;
+}
+
+.table-custom th {
+    background: #f8f9fb;
+    color: #636e72;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    padding: 15px;
+    border-bottom: 2px solid #e1e4e8;
+    position: sticky;
+    top: 0;
+}
+
+.table-custom td {
+    padding: 15px;
+    border-bottom: 1px solid #f0f2f5;
+    vertical-align: middle;
+}
+
+.table-custom tr:hover td {
+    background-color: #fafbfc;
+}
+
+/* --- ESTILOS DE LA MATRIZ (REPASO) --- */
+
+.target-container-minimal {
+    padding: 8px 12px;
+    background: #f1f4f7;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.target-name-bold {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-weight: 700;
+    color: #2d3436;
+    font-size: 12px;
+}
+
+/* --- RESPONSIVE --- */
+
+@media (max-width: 992px) {
+    .header-plain {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-container {
+        max-width: 100%;
+    }
+}
+
+/*PAGINACION*/
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 25px;
+    padding: 15px;
+    background: #f8f9fb;
+    border-radius: 12px;
+}
+
+.page-btn {
+    background: white;
+    border: 1px solid #0078d4;
+    color: #0078d4;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.page-btn:disabled {
+    border-color: #e1e4e8;
+    color: #b2bec3;
+    cursor: not-allowed;
+}
+
+.page-btn:not(:disabled):hover {
+    background: #0078d4;
+    color: white;
+}

@@ -1,15 +1,28 @@
 <div class="main-container" *ngIf="activeSection !== 'attribute-plain'">
   <div class="viewer-panel">
     
-  <div class="selected-badge" *ngIf="currentApp && activeSection !== 'list'">
-  <span class="badge-label">CONECTOR SELECCIONADO:</span>
-  <span class="badge-instance">
-    {{ selectedInstanceName || 'No seleccionado' }}
-  </span>
-</div>
+    <div class="selected-badge" *ngIf="currentApp && activeSection !== 'list'">
+      <span class="badge-label">CONECTOR SELECCIONADO:</span>
+      <span class="badge-instance">
+        {{ selectedInstanceName || 'No seleccionado' }}
+      </span>
+    </div>
 
     <div *ngIf="activeSection === 'list'" class="content-animate">
-      <h2>Catálogo de Conectores OIM</h2>
+      <div class="header-catalog">
+        <h2>Catálogo de Conectores OIM</h2>
+    
+        <div class="search-container">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            class="input-search" 
+            placeholder="Buscar conector por nombre o descripción..."
+            [(ngModel)]="searchText"
+            (input)="filterConnectors()">
+        </div>
+      </div>
+    
       <table>
         <thead>
           <tr>
@@ -28,9 +41,15 @@
               </button>
             </td>
           </tr>
+          <tr *ngIf="pagedConnectors.length === 0">
+            <td colspan="3" style="text-align: center; padding: 20px; color: #636e72;">
+              No se encontraron resultados para "{{ searchText }}"
+            </td>
+          </tr>
         </tbody>
       </table>
-      <div class="pagination">
+
+      <div class="pagination" *ngIf="pagedConnectors.length > 0">
         <button class="page-btn" [disabled]="currentPage === 1" (click)="changePage(-1)">Anterior</button>
         <span class="page-info">Página {{ currentPage }} de {{ totalPages }}</span>
         <button class="page-btn" [disabled]="currentPage === totalPages" (click)="changePage(1)">Siguiente</button>
@@ -135,7 +154,7 @@
       <button class="close-btn" (click)="closeModal()">&times;</button>
     </div>
     <div class="modal-body">
-      <p>{{ modalContent }}</p>
+      <p style="white-space: pre-wrap;">{{ modalContent }}</p>
     </div>
     <div class="modal-footer">
       <button class="btn-detail" (click)="closeModal()">Cerrar</button>
@@ -143,20 +162,7 @@
   </div>
 </div>
 
-<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>{{ modalTitle }}</h3>
-      <button class="close-btn" (click)="closeModal()">&times;</button>
-    </div>
-    <div class="modal-body">
-      <p>{{ modalContent }}</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-detail" (click)="closeModal()">Cerrar</button>
-    </div>
-  </div>
-</div> <div class="fab-container" *ngIf="activeSection !== 'attribute-plain'">
+<div class="fab-container" *ngIf="activeSection !== 'attribute-plain'">
   <div class="fab-options" [class.active]="showFloatingMenu">
     <div class="fab-item" (click)="goToAttributePlain()">
       <span class="fab-label">Plano de Atributos</span>

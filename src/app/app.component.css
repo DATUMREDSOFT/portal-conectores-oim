@@ -332,3 +332,46 @@ td { padding: 15px; border-bottom: 1px solid #e1e4e8; color: #2d3436; }
 .fab-item:hover .fab-icon-sub {
   background: #f0f7ff;
 }
+
+
+.header-catalog {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  gap: 20px;
+}
+
+.search-container {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #636e72;
+}
+
+.input-search {
+  width: 100%;
+  padding: 10px 15px 10px 40px;
+  border: 1px solid #e1e4e8;
+  border-radius: 20px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.input-search:focus {
+  border-color: #0078d4;
+  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+}
+
+@media (max-width: 768px) {
+  .header-catalog { flex-direction: column; align-items: flex-start; }
+  .search-container { max-width: 100%; }
+}
